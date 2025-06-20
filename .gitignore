@@ -1,0 +1,177 @@
+# Qt项目gitignore文件
+# 生成于h7_ipset项目
+
+#-------------------------------------------------
+# Qt特定文件
+#-------------------------------------------------
+
+# Qt Creator用户配置文件
+*.pro.user
+*.pro.user.*
+
+# Qt编译器生成的文件
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+
+# Qt翻译文件
+*.qm
+
+# Qt Designer备份文件
+*.bak
+
+#-------------------------------------------------
+# 编译构建产物
+#-------------------------------------------------
+
+# 构建目录
+build/
+build-*/
+*-build-*/
+
+# 调试和发布目录
+debug/
+release/
+Debug/
+Release/
+
+# 目标文件和库文件
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dll
+*.dylib
+
+# 可执行文件
+*.exe
+*.app
+
+# Makefile
+Makefile*
+!Makefile.am
+
+# CMake生成文件
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.cmake
+
+# qmake生成文件
+object_script.*
+
+#-------------------------------------------------
+# IDE和编辑器配置文件
+#-------------------------------------------------
+
+# Qt Creator
+*.pro.user*
+*.qbs.user*
+*.qtcreator
+
+# Visual Studio
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# CLion
+.idea/
+cmake-build-*/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Code::Blocks
+*.cbp
+*.depend
+*.layout
+
+#-------------------------------------------------
+# 系统文件
+#-------------------------------------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Linux
+*~
+.directory
+
+#-------------------------------------------------
+# 临时文件和日志
+#-------------------------------------------------
+
+# 日志文件
+*.log
+*.log.*
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 核心转储文件
+core
+core.*
+
+#-------------------------------------------------
+# 包管理和依赖
+#-------------------------------------------------
+
+# vcpkg
+vcpkg_installed/
+.vcpkg-root
+
+# Conan
+conandata.yml
+conanfile.txt
+conanbuildinfo.*
+
+#-------------------------------------------------
+# 其他
+#-------------------------------------------------
+
+# 压缩文件
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# 文档生成
+doc/html/
+doc/latex/
+
+# 测试覆盖率文件
+*.gcov
+*.gcda
+*.gcno
+coverage.info
+
+# 性能分析文件
+*.prof
+gmon.out 
