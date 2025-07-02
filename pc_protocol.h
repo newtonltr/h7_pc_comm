@@ -24,6 +24,9 @@ enum protocol_function_code_e
 {
     PC_MAC_ADDR_SET               = 0x00D1,  /// 自定义功能码，设置mac地址，数据长度为6字节
     PC_IP_ADDR_SET                = 0x00D2,  /// 自定义功能码，设置ip地址，数据长度为4字节
+    PC_MASK_ADDR_SET              = 0x00D3,  /// 自定义功能码，设置子网掩码，数据长度为4字节
+    PC_GATEWAY_ADDR_SET           = 0x00D4,  /// 自定义功能码，设置网关地址，数据长度为4字节
+    
 };
 
 #pragma pack(1)

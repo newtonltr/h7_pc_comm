@@ -39,6 +39,29 @@ QByteArray ProtocolFrame::buildIpSetFrame(const QString& ipAddress)
     return buildFrame(PC_IP_ADDR_SET, ipData);
 }
 
+QByteArray ProtocolFrame::buildMaskSetFrame(const QString& maskAddress)
+{
+    QByteArray maskData = ipStringToBytes(maskAddress);
+    if (maskData.isEmpty()) {
+        qWarning() << "Invalid mask address format:" << maskAddress;
+        return QByteArray();
+    }
+
+    return buildFrame(PC_MASK_ADDR_SET, maskData);
+}
+
+QByteArray ProtocolFrame::buildGatewaySetFrame(const QString& gatewayAddress)
+{
+    QByteArray gatewayData = ipStringToBytes(gatewayAddress);
+    if (gatewayData.isEmpty()) {
+        qWarning() << "Invalid gateway address format:" << gatewayAddress;
+        return QByteArray();
+    }
+
+    return buildFrame(PC_GATEWAY_ADDR_SET, gatewayData);
+}
+
+
 ProtocolFrame::ParsedData ProtocolFrame::parseFrame(const QByteArray& frameData)
 {
     ParsedData result;

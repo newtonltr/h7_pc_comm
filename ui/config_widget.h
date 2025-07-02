@@ -60,12 +60,20 @@ signals:
     // IP地址设置信号
     void ipAddressSetRequested(const QString& ipAddress);
 
+    // 子网掩码设置信号
+    void maskAddressSetRequested(const QString& maskAddress);
+    
+    // 网关地址设置信号
+    void gatewayAddressSetRequested(const QString& gatewayAddress);
+
 private slots:
     void onCommunicationTypeChanged();
     void onConnectClicked();
     void onDisconnectClicked();
     void onSetMacClicked();
     void onSetIpClicked();
+    void onSetMaskClicked();
+    void onSetGatewayClicked();
     void onSerialPortRefreshClicked();
 
 private:
@@ -108,6 +116,16 @@ private:
     QGroupBox* m_ipGroupBox;
     QLineEdit* m_ipEdit;
     QPushButton* m_setIpBtn;
+
+    // 子网掩码设置
+    QGroupBox* m_maskGroupBox;
+    QLineEdit* m_maskEdit;
+    QPushButton* m_setMaskBtn;
+
+    // 网关地址设置
+    QGroupBox* m_gatewayGroupBox;
+    QLineEdit* m_gatewayEdit;
+    QPushButton* m_setGatewayBtn;
     
     // 连接控制
     QGroupBox* m_controlGroupBox;

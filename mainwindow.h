@@ -41,6 +41,8 @@ private slots:
     // 设备参数设置槽函数
     void onMacAddressSetRequested(uint8_t macHighByte);
     void onIpAddressSetRequested(const QString& ipAddress);
+    void onMaskAddressSetRequested(const QString& maskAddress);
+    void onGatewayAddressSetRequested(const QString& gatewayAddress);
     
     // 串口通信槽函数
     void onSerialDataReceived(const QByteArray& data);

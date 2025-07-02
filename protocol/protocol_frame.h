@@ -22,6 +22,11 @@ public:
     
     // 静态工厂方法 - 创建IP地址设置帧  
     static QByteArray buildIpSetFrame(const QString& ipAddress);
+    // 静态工厂方法 - 创建子网掩码设置帧  
+    static QByteArray buildMaskSetFrame(const QString& maskAddress);
+    // 静态工厂方法 - 创建网关地址设置帧  
+    static QByteArray buildGatewaySetFrame(const QString& gatewayAddress);
+
     
     // 解析接收到的帧数据
     struct ParsedData {

@@ -190,9 +190,33 @@ void ConfigWidget::initializeParameterGroup()
     
     m_setIpBtn = new QPushButton("设置IP", m_ipGroupBox);
     ipLayout->addWidget(m_setIpBtn, 0, 2);
+
+    // 子网掩码设置组
+    m_maskGroupBox = new QGroupBox("子网掩码设置", m_paramGroupBox);
+    QGridLayout* maskLayout = new QGridLayout(m_maskGroupBox);
     
+    maskLayout->addWidget(new QLabel("子网掩码:"), 0, 0);
+    m_maskEdit = new QLineEdit("255.255.255.0", m_maskGroupBox);
+    maskLayout->addWidget(m_maskEdit, 0, 1);
+    
+    m_setMaskBtn = new QPushButton("设置子网掩码", m_maskGroupBox);
+    maskLayout->addWidget(m_setMaskBtn, 0, 2);
+
+    // 网关地址设置组
+    m_gatewayGroupBox = new QGroupBox("网关地址设置", m_paramGroupBox);
+    QGridLayout* gatewayLayout = new QGridLayout(m_gatewayGroupBox);
+
+    gatewayLayout->addWidget(new QLabel("网关地址:"), 0, 0);
+    m_gatewayEdit = new QLineEdit("192.168.110.1", m_gatewayGroupBox);
+    gatewayLayout->addWidget(m_gatewayEdit, 0, 1);
+
+    m_setGatewayBtn = new QPushButton("设置网关", m_gatewayGroupBox);
+    gatewayLayout->addWidget(m_setGatewayBtn, 0, 2);
+
     mainLayout->addWidget(m_macGroupBox);
     mainLayout->addWidget(m_ipGroupBox);
+    mainLayout->addWidget(m_maskGroupBox);
+    mainLayout->addWidget(m_gatewayGroupBox);
     mainLayout->addStretch();
 }
 
@@ -231,7 +255,8 @@ void ConfigWidget::setupConnections()
     // 参数设置
     connect(m_setMacBtn, &QPushButton::clicked, this, &ConfigWidget::onSetMacClicked);
     connect(m_setIpBtn, &QPushButton::clicked, this, &ConfigWidget::onSetIpClicked);
-    
+    connect(m_setMaskBtn, &QPushButton::clicked, this, &ConfigWidget::onSetMaskClicked);
+    connect(m_setGatewayBtn, &QPushButton::clicked, this, &ConfigWidget::onSetGatewayClicked);
     // 串口刷新
     connect(m_serialRefreshBtn, &QPushButton::clicked, this, &ConfigWidget::onSerialPortRefreshClicked);
     
@@ -285,6 +310,17 @@ void ConfigWidget::onSetIpClicked()
     
     emit ipAddressSetRequested(m_ipEdit->text());
 }
+
+void ConfigWidget::onSetMaskClicked()
+{
+    emit maskAddressSetRequested(m_maskEdit->text());
+}
+
+void ConfigWidget::onSetGatewayClicked()
+{
+    emit gatewayAddressSetRequested(m_gatewayEdit->text());
+}
+
 
 void ConfigWidget::onSerialPortRefreshClicked()
 {
