@@ -468,7 +468,7 @@ void ConfigWidget::populateBaudRates()
         "1200", "2400", "4800", "9600", "19200", 
         "38400", "57600", "115200"
     });
-    m_baudRateCombo->setCurrentText("9600"); // 默认选择9600
+    m_baudRateCombo->setCurrentText("115200"); // 默认选择115200
 }
 
 void ConfigWidget::populateSerialSettings()
