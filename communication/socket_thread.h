@@ -1,41 +1,21 @@
 #ifndef SOCKET_THREAD_H
 #define SOCKET_THREAD_H
 
+#include <QObject>
 #include <QThread>
-#include <QTcpSocket>
-#include <QHostAddress>
 #include <QByteArray>
-#include <QMutex>
-#include <QWaitCondition>
-#include <QQueue>
-#include <QTimer>
+#include "socket_worker.h"
 
-class SocketThread : public QThread
+class SocketThread : public QObject
 {
     Q_OBJECT
 
 public:
+    // 使用 SocketWorker 的配置结构
+    using SocketConfig = SocketWorker::SocketConfig;
+
     explicit SocketThread(QObject *parent = nullptr);
     ~SocketThread();
-
-    // Socket配置参数
-    struct SocketConfig {
-        QString hostAddress;        // 目标IP地址
-        quint16 port;              // 目标端口
-        int connectTimeout;        // 连接超时时间(ms)
-        int readTimeout;           // 读取超时时间(ms)
-        bool autoReconnect;        // 是否自动重连
-        int reconnectInterval;     // 重连间隔(ms)
-        
-        SocketConfig() {
-            hostAddress = "192.168.1.100";
-            port = 8080;
-            connectTimeout = 5000;
-            readTimeout = 3000;
-            autoReconnect = true;
-            reconnectInterval = 3000;
-        }
-    };
 
     // 控制方法
     bool connectToHost(const SocketConfig& config);
@@ -70,39 +50,19 @@ signals:
     // 断开连接信号
     void disconnected();
 
-protected:
-    void run() override;
-
 private slots:
-    void handleConnected();
-    void handleDisconnected();
-    void handleReadyRead();
-    void handleErrorOccurred(QAbstractSocket::SocketError error);
-    void attemptReconnect();
+    // 处理 Worker 信号
+    void onWorkerConnectResult(bool success, const QString& message);
 
 private:
-    QTcpSocket* m_socket;
+    QThread* m_workerThread;
+    SocketWorker* m_worker;
     SocketConfig m_config;
     bool m_connected;
-    bool m_shouldReconnect;
-    
-    // 线程同步
-    QMutex m_mutex;
-    QWaitCondition m_condition;
-    bool m_stopRequested;
-    
-    // 发送队列
-    QQueue<QByteArray> m_sendQueue;
-    QMutex m_sendMutex;
-    
-    // 重连定时器
-    QTimer* m_reconnectTimer;
     
     // 内部方法
-    void processSendQueue();
-    void cleanupSocket();
-    void setupSocket();
-    QString socketErrorToString(QAbstractSocket::SocketError error);
+    void setupWorker();
+    void cleanupWorker();
 };
 
 #endif // SOCKET_THREAD_H 

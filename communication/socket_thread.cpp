@@ -1,110 +1,60 @@
 #include "socket_thread.h"
 #include <QDebug>
-#include <QHostAddress>
-#include <QTimer>
 
 SocketThread::SocketThread(QObject *parent)
-    : QThread(parent)
-    , m_socket(nullptr)
+    : QObject(parent)
+    , m_workerThread(nullptr)
+    , m_worker(nullptr)
     , m_connected(false)
-    , m_shouldReconnect(false)
-    , m_stopRequested(false)
-    , m_reconnectTimer(nullptr)
 {
+    setupWorker();
 }
 
 SocketThread::~SocketThread()
 {
-    disconnectFromHost();
-    
-    // 停止线程
-    m_stopRequested = true;
-    m_condition.wakeAll();
-    
-    if (isRunning()) {
-        quit();
-        wait(3000); // 等待最多3秒
-    }
+    cleanupWorker();
 }
 
 bool SocketThread::connectToHost(const SocketConfig& config)
 {
-    if (m_connected) {
-        disconnectFromHost();
+    if (!m_worker) {
+        qWarning() << "Socket Worker not initialized";
+        return false;
     }
     
     m_config = config;
-    m_shouldReconnect = config.autoReconnect;
     
-    // 设置Socket
-    setupSocket();
+    // 通过信号槽调用 Worker 的连接方法
+    QMetaObject::invokeMethod(m_worker, "connectToHost", 
+                             Qt::QueuedConnection,
+                             Q_ARG(SocketWorker::SocketConfig, config));
     
-    // 尝试连接
-    qDebug() << "尝试连接到" << config.hostAddress << ":" << config.port;
-    m_socket->connectToHost(QHostAddress(config.hostAddress), config.port);
-    
-    // 等待连接结果
-    if (m_socket->waitForConnected(config.connectTimeout)) {
-        m_connected = true;
-        emit connectionStateChanged(true);
-        emit connected();
-        
-        // 启动线程
-        if (!isRunning()) {
-            start();
-        }
-        
-        qDebug() << "Socket连接成功:" << getConnectionInfo();
-        return true;
-    } else {
-        QString errorMsg = QString("无法连接到 %1:%2 - %3")
-                          .arg(config.hostAddress)
-                          .arg(config.port)
-                          .arg(m_socket->errorString());
-        qWarning() << errorMsg;
-        emit errorOccurred(errorMsg);
-        return false;
-    }
+    return true; // 实际结果通过 onWorkerConnectResult 信号返回
 }
 
 void SocketThread::disconnectFromHost()
 {
-    m_shouldReconnect = false;
-    
-    if (m_socket && m_connected) {
-        m_connected = false;
-        m_socket->disconnectFromHost();
-        
-        if (m_socket->state() != QAbstractSocket::UnconnectedState) {
-            m_socket->waitForDisconnected(3000);
-        }
-        
-        emit connectionStateChanged(false);
-        emit disconnected();
-        qDebug() << "Socket已断开连接";
+    if (m_worker) {
+        QMetaObject::invokeMethod(m_worker, "disconnectFromHost", Qt::QueuedConnection);
     }
-    
-    cleanupSocket();
+    m_connected = false;
 }
 
 bool SocketThread::isConnected() const
 {
-    return m_connected && m_socket && m_socket->state() == QAbstractSocket::ConnectedState;
+    return m_connected;
 }
 
 void SocketThread::sendData(const QByteArray& data)
 {
-    if (!isConnected()) {
-        emit errorOccurred("Socket未连接，无法发送数据");
+    if (!m_worker) {
+        emit errorOccurred("Socket Worker not initialized");
         return;
     }
     
-    // 将数据加入发送队列
-    QMutexLocker locker(&m_sendMutex);
-    m_sendQueue.enqueue(data);
-    
-    // 唤醒工作线程
-    m_condition.wakeAll();
+    QMetaObject::invokeMethod(m_worker, "sendData", 
+                             Qt::QueuedConnection,
+                             Q_ARG(QByteArray, data));
 }
 
 SocketThread::SocketConfig SocketThread::getCurrentConfig() const
@@ -114,152 +64,82 @@ SocketThread::SocketConfig SocketThread::getCurrentConfig() const
 
 QString SocketThread::getConnectionInfo() const
 {
-    if (m_socket && m_connected) {
-        return QString("%1:%2 -> %3:%4")
-                .arg(m_socket->localAddress().toString())
-                .arg(m_socket->localPort())
-                .arg(m_socket->peerAddress().toString())
-                .arg(m_socket->peerPort());
+    // 由于 Worker 在另一个线程，暂时返回配置信息
+    if (m_connected) {
+        return QString("连接到 %1:%2").arg(m_config.hostAddress).arg(m_config.port);
     }
     return "未连接";
 }
 
-void SocketThread::run()
+void SocketThread::setupWorker()
 {
-    qDebug() << "Socket线程开始运行";
+    // 创建工作线程
+    m_workerThread = new QThread(this);
     
-    while (!m_stopRequested) {
-        // 处理发送队列
-        processSendQueue();
-        
-        // 等待新的发送请求或退出信号
-        QMutexLocker locker(&m_mutex);
-        if (m_sendQueue.isEmpty() && !m_stopRequested) {
-            m_condition.wait(&m_mutex, 100); // 最多等待100ms
-        }
-    }
+    // 创建 Worker 对象（无父对象）
+    m_worker = new SocketWorker();
     
-    qDebug() << "Socket线程结束运行";
-}
-
-void SocketThread::handleConnected()
-{
-    m_connected = true;
-    emit connectionStateChanged(true);
-    emit connected();
-    qDebug() << "Socket连接建立:" << getConnectionInfo();
-}
-
-void SocketThread::handleDisconnected()
-{
-    bool wasConnected = m_connected;
-    m_connected = false;
+    // 将 Worker 移动到工作线程
+    m_worker->moveToThread(m_workerThread);
     
-    if (wasConnected) {
-        emit connectionStateChanged(false);
-        emit disconnected();
-        qDebug() << "Socket连接断开";
-    }
-}
-
-void SocketThread::handleReadyRead()
-{
-    if (!m_socket) {
-        return;
-    }
+    // 连接 Worker 信号到本对象的信号（转发）
+    connect(m_worker, &SocketWorker::dataReceived,
+            this, &SocketThread::dataReceived);
+    connect(m_worker, &SocketWorker::connectionStateChanged,
+            this, &SocketThread::connectionStateChanged);
+    connect(m_worker, &SocketWorker::errorOccurred,
+            this, &SocketThread::errorOccurred);
+    connect(m_worker, &SocketWorker::dataSent,
+            this, &SocketThread::dataSent);
+    connect(m_worker, &SocketWorker::connected,
+            this, &SocketThread::connected);
+    connect(m_worker, &SocketWorker::disconnected,
+            this, &SocketThread::disconnected);
+    connect(m_worker, &SocketWorker::connectResult,
+            this, &SocketThread::onWorkerConnectResult);
     
-    QByteArray data = m_socket->readAll();
-    if (!data.isEmpty()) {
-        qDebug() << "Socket接收数据:" << data.toHex(' ');
-        emit dataReceived(data);
-    }
-}
-
-void SocketThread::handleErrorOccurred(QAbstractSocket::SocketError error)
-{
-    QString errorString = socketErrorToString(error);
-    qWarning() << "Socket错误:" << errorString;
-    emit errorOccurred(errorString);
-}
-
-void SocketThread::attemptReconnect()
-{
-    if (m_shouldReconnect && !m_connected) {
-        qDebug() << "尝试重新连接...";
-        
-        if (m_socket) {
-            m_socket->connectToHost(QHostAddress(m_config.hostAddress), m_config.port);
-        }
-    }
-}
-
-void SocketThread::processSendQueue()
-{
-    QMutexLocker locker(&m_sendMutex);
+    // 连接线程启动信号到 Worker 初始化
+    connect(m_workerThread, &QThread::started,
+            m_worker, &SocketWorker::initialize);
     
-    while (!m_sendQueue.isEmpty() && isConnected()) {
-        QByteArray data = m_sendQueue.dequeue();
-        locker.unlock();
-        
-        // 发送数据
-        qint64 bytesWritten = m_socket->write(data);
-        if (bytesWritten == data.size()) {
-            if (m_socket->waitForBytesWritten(3000)) {
-                qDebug() << "Socket发送数据成功:" << data.toHex(' ');
-                emit dataSent(data);
-            } else {
-                qWarning() << "Socket发送数据超时";
-                emit errorOccurred("数据发送超时");
-            }
-        } else {
-            qWarning() << "Socket数据发送不完整";
-            emit errorOccurred("数据发送不完整");
+    // 连接线程结束信号到 Worker 清理
+    connect(m_workerThread, &QThread::finished,
+            m_worker, &SocketWorker::cleanup);
+    connect(m_workerThread, &QThread::finished,
+            m_worker, &SocketWorker::deleteLater);
+    
+    // 启动工作线程
+    m_workerThread->start();
+    
+    qDebug() << "Socket线程系统已初始化";
+}
+
+void SocketThread::cleanupWorker()
+{
+    if (m_workerThread) {
+        // 停止工作线程
+        m_workerThread->quit();
+        if (!m_workerThread->wait(3000)) {
+            qWarning() << "Socket工作线程未能正常退出，强制终止";
+            m_workerThread->terminate();
+            m_workerThread->wait(1000);
         }
         
-        locker.relock();
-    }
-}
-
-void SocketThread::cleanupSocket()
-{
-    if (m_socket) {
-        m_socket->deleteLater();
-        m_socket = nullptr;
+        m_workerThread->deleteLater();
+        m_workerThread = nullptr;
     }
     
-    // 清空发送队列
-    QMutexLocker locker(&m_sendMutex);
-    m_sendQueue.clear();
+    // Worker 对象会通过 deleteLater 自动清理
+    m_worker = nullptr;
+    
+    qDebug() << "Socket线程系统已清理";
 }
 
-void SocketThread::setupSocket()
+void SocketThread::onWorkerConnectResult(bool success, const QString& message)
 {
-    cleanupSocket();
-    
-    m_socket = new QTcpSocket(this);
-    
-    // 连接信号槽
-    connect(m_socket, &QTcpSocket::connected, this, &SocketThread::handleConnected);
-    connect(m_socket, &QTcpSocket::disconnected, this, &SocketThread::handleDisconnected);
-    connect(m_socket, &QTcpSocket::readyRead, this, &SocketThread::handleReadyRead);
-    connect(m_socket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
-            this, &SocketThread::handleErrorOccurred);
-}
-
-QString SocketThread::socketErrorToString(QAbstractSocket::SocketError error)
-{
-    switch (error) {
-    case QAbstractSocket::ConnectionRefusedError:
-        return "连接被拒绝";
-    case QAbstractSocket::RemoteHostClosedError:
-        return "远程主机关闭连接";
-    case QAbstractSocket::HostNotFoundError:
-        return "主机未找到";
-    case QAbstractSocket::SocketTimeoutError:
-        return "Socket超时";
-    case QAbstractSocket::NetworkError:
-        return "网络错误";
-    default:
-        return "未知错误";
+    m_connected = success;
+    if (!success) {
+        emit errorOccurred(message);
     }
+    qDebug() << "Socket连接结果:" << (success ? "成功" : "失败") << message;
 } 
