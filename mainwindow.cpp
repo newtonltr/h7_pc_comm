@@ -146,6 +146,8 @@ void MainWindow::setupConnections()
             this, &MainWindow::onMaskAddressSetRequested);
     connect(m_configWidget, &ConfigWidget::gatewayAddressSetRequested,
             this, &MainWindow::onGatewayAddressSetRequested);
+    connect(m_configWidget, &ConfigWidget::vcuParamSetRequested,
+            this, &MainWindow::onVcuParamSetRequested);
     // 串口通信信号连接
     connect(m_serialThread, &SerialThread::dataReceived,
             this, &MainWindow::onSerialDataReceived);
@@ -322,7 +324,11 @@ void MainWindow::onIpAddressSetRequested(const QString& ipAddress)
     if (!frame.isEmpty() && sendProtocolFrame(frame)) {
         m_debugWidget->addStatusMessage(QString("IP地址设置命令已发送: %1").arg(ipAddress));
     } else {
-        showError("IP地址格式错误或发送失败");
+        if (frame.isEmpty()) {
+            showError("IP地址格式错误");
+        } else {
+            showError("IP地址发送失败");
+        }
     }
 }
 
@@ -337,7 +343,11 @@ void MainWindow::onMaskAddressSetRequested(const QString& maskAddress)
     if (!frame.isEmpty() && sendProtocolFrame(frame)) {
         m_debugWidget->addStatusMessage(QString("子网掩码设置命令已发送: %1").arg(maskAddress));
     } else {
-        showError("子网掩码格式错误或发送失败");
+        if (frame.isEmpty()) {
+            showError("子网掩码格式错误");
+        } else {
+            showError("子网掩码发送失败");
+        }
     }
 }
 
@@ -352,7 +362,31 @@ void MainWindow::onGatewayAddressSetRequested(const QString& gatewayAddress)
     if (!frame.isEmpty() && sendProtocolFrame(frame)) {
         m_debugWidget->addStatusMessage(QString("网关地址设置命令已发送: %1").arg(gatewayAddress));
     } else {
-        showError("网关地址格式错误或发送失败");
+        if (frame.isEmpty()) {
+            showError("网关地址格式错误");
+        } else {
+            showError("网关地址发送失败");
+        }
+    }
+}
+
+void MainWindow::onVcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
+{
+    if (!m_isConnected) {
+        showError("请先建立通信连接");
+        return;
+    }
+
+    QByteArray frame = ProtocolFrame::buildVcuParamSetFrame(rearObstacleDistance, speedCorrectionFactor);
+    if (!frame.isEmpty() && sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage(QString("VCU参数设置命令已发送: 后避障距离: %1, 速度校正系数: %2")
+                                      .arg(rearObstacleDistance).arg(speedCorrectionFactor));
+    } else {
+        if (frame.isEmpty()) {
+            showError("VCU参数格式错误");
+        } else {
+            showError("VCU参数发送失败");
+        }
     }
 }
 

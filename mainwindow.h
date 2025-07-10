@@ -43,6 +43,7 @@ private slots:
     void onIpAddressSetRequested(const QString& ipAddress);
     void onMaskAddressSetRequested(const QString& maskAddress);
     void onGatewayAddressSetRequested(const QString& gatewayAddress);
+    void onVcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
     
     // 串口通信槽函数
     void onSerialDataReceived(const QByteArray& data);

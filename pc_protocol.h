@@ -26,6 +26,7 @@ enum protocol_function_code_e
     PC_IP_ADDR_SET                = 0x01F2,  /// 自定义功能码，设置ip地址，数据长度为4字节
     PC_MASK_ADDR_SET              = 0x01F3,  /// 自定义功能码，设置子网掩码，数据长度为4字节
     PC_GATEWAY_ADDR_SET           = 0x01F4,  /// 自定义功能码，设置网关地址，数据长度为4字节
+    PC_VCU_PARAM_SET              = 0xFFFD,  /// 自定义功能码，设置VCU参数：后避障距离和速度校正系数，数据长度为8字节        
     
 };
 

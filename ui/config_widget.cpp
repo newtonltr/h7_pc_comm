@@ -213,10 +213,26 @@ void ConfigWidget::initializeParameterGroup()
     m_setGatewayBtn = new QPushButton("设置网关", m_gatewayGroupBox);
     gatewayLayout->addWidget(m_setGatewayBtn, 0, 2);
 
+    // VCU参数设置组
+    m_vcuParamGroupBox = new QGroupBox("VCU参数设置", m_paramGroupBox);
+    QGridLayout* vcuParamLayout = new QGridLayout(m_vcuParamGroupBox);
+    
+    vcuParamLayout->addWidget(new QLabel("后避障距离(m):"), 0, 0);
+    m_vcuParamRearObstacleDistanceEdit = new QLineEdit("0.16", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_vcuParamRearObstacleDistanceEdit, 0, 1);
+
+    vcuParamLayout->addWidget(new QLabel("速度校正系数:"), 1, 0);
+    m_vcuParamSpeedCorrectionFactorEdit = new QLineEdit("0.98", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_vcuParamSpeedCorrectionFactorEdit, 1, 1);
+
+    m_setVcuParamBtn = new QPushButton("设置VCU参数", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_setVcuParamBtn, 0, 2);
+
     mainLayout->addWidget(m_macGroupBox);
     mainLayout->addWidget(m_ipGroupBox);
     mainLayout->addWidget(m_maskGroupBox);
     mainLayout->addWidget(m_gatewayGroupBox);
+    mainLayout->addWidget(m_vcuParamGroupBox);
     mainLayout->addStretch();
 }
 
@@ -257,6 +273,7 @@ void ConfigWidget::setupConnections()
     connect(m_setIpBtn, &QPushButton::clicked, this, &ConfigWidget::onSetIpClicked);
     connect(m_setMaskBtn, &QPushButton::clicked, this, &ConfigWidget::onSetMaskClicked);
     connect(m_setGatewayBtn, &QPushButton::clicked, this, &ConfigWidget::onSetGatewayClicked);
+    connect(m_setVcuParamBtn, &QPushButton::clicked, this, &ConfigWidget::onSetVcuParamClicked);
     // 串口刷新
     connect(m_serialRefreshBtn, &QPushButton::clicked, this, &ConfigWidget::onSerialPortRefreshClicked);
     
@@ -319,6 +336,11 @@ void ConfigWidget::onSetMaskClicked()
 void ConfigWidget::onSetGatewayClicked()
 {
     emit gatewayAddressSetRequested(m_gatewayEdit->text());
+}
+
+void ConfigWidget::onSetVcuParamClicked()
+{
+    emit vcuParamSetRequested(m_vcuParamRearObstacleDistanceEdit->text(), m_vcuParamSpeedCorrectionFactorEdit->text());
 }
 
 

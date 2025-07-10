@@ -27,6 +27,9 @@ public:
     // 静态工厂方法 - 创建网关地址设置帧  
     static QByteArray buildGatewaySetFrame(const QString& gatewayAddress);
 
+    // 静态工厂方法 - 创建VCU参数设置帧  
+    static QByteArray buildVcuParamSetFrame(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
+
     
     // 解析接收到的帧数据
     struct ParsedData {

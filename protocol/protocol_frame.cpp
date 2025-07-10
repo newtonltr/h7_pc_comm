@@ -61,6 +61,24 @@ QByteArray ProtocolFrame::buildGatewaySetFrame(const QString& gatewayAddress)
     return buildFrame(PC_GATEWAY_ADDR_SET, gatewayData);
 }
 
+QByteArray ProtocolFrame::buildVcuParamSetFrame(const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
+{
+    QByteArray vcuParamData;
+    float rearObstacleDistanceFloat = rearObstacleDistance.toFloat();   
+    float speedCorrectionFactorFloat = speedCorrectionFactor.toFloat();
+    vcuParamData.append(reinterpret_cast<const char*>(&rearObstacleDistanceFloat), sizeof(float));
+    vcuParamData.append(reinterpret_cast<const char*>(&speedCorrectionFactorFloat), sizeof(float));
+    if (vcuParamData.isEmpty()) {
+        qWarning() << "Invalid vcu param format:" << rearObstacleDistance << "or" << speedCorrectionFactor;
+        return QByteArray();
+    }
+
+    return buildFrame(PC_VCU_PARAM_SET, vcuParamData);
+}
+
+
+
+
 
 ProtocolFrame::ParsedData ProtocolFrame::parseFrame(const QByteArray& frameData)
 {

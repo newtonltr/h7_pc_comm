@@ -66,6 +66,9 @@ signals:
     // 网关地址设置信号
     void gatewayAddressSetRequested(const QString& gatewayAddress);
 
+    // VCU参数设置信号
+    void vcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
+
 private slots:
     void onCommunicationTypeChanged();
     void onConnectClicked();
@@ -74,6 +77,7 @@ private slots:
     void onSetIpClicked();
     void onSetMaskClicked();
     void onSetGatewayClicked();
+    void onSetVcuParamClicked();
     void onSerialPortRefreshClicked();
 
 private:
@@ -126,6 +130,12 @@ private:
     QGroupBox* m_gatewayGroupBox;
     QLineEdit* m_gatewayEdit;
     QPushButton* m_setGatewayBtn;
+
+    // VCU参数设置
+    QGroupBox* m_vcuParamGroupBox;
+    QLineEdit* m_vcuParamRearObstacleDistanceEdit;
+    QLineEdit* m_vcuParamSpeedCorrectionFactorEdit;
+    QPushButton* m_setVcuParamBtn;
     
     // 连接控制
     QGroupBox* m_controlGroupBox;
