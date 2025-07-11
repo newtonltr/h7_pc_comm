@@ -49,9 +49,15 @@ struct pc_comm_protocol__head_t
 typedef struct {
     uint32_t magic_number;    // 魔数标识 0xDEADBEEF
     uint32_t timestamp;       // 时间戳（运行时间）
-    uint32_t pc_value;        // 程序计数器值
     uint32_t sp_value;        // 堆栈指针值  
+    uint32_t r0_value;        // r0寄存器值
+    uint32_t r1_value;        // r1寄存器值
+    uint32_t r2_value;        // r2寄存器值
+    uint32_t r3_value;        // r3寄存器值
+    uint32_t r12_value;       // r12寄存器值
     uint32_t lr_value;        // 链接寄存器值
+    uint32_t pc_value;        // 程序计数器值
+    uint32_t xpsr_value;       // xpsr寄存器值
     uint32_t fault_count;     // 故障计数器
     uint32_t reserved[2];     // 保留字段，保持32字节对齐
 } hardfault_info_t;

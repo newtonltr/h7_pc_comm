@@ -15,9 +15,15 @@ StatusWidget::StatusWidget(QWidget *parent)
     , m_hardFaultScrollArea(nullptr)
     , m_magicNumberEdit(nullptr)
     , m_timestampEdit(nullptr)
-    , m_pcValueEdit(nullptr)
     , m_spValueEdit(nullptr)
+    , m_r0ValueEdit(nullptr)
+    , m_r1ValueEdit(nullptr)
+    , m_r2ValueEdit(nullptr)
+    , m_r3ValueEdit(nullptr)
+    , m_r12ValueEdit(nullptr)
     , m_lrValueEdit(nullptr)
+    , m_pcValueEdit(nullptr)
+    , m_xpsrValueEdit(nullptr)
     , m_faultCountEdit(nullptr)
     , m_hardFaultLastUpdateLabel(nullptr)
     , m_vcuTab(nullptr)
@@ -189,23 +195,59 @@ void StatusWidget::initializeHardFaultTab()
     m_timestampEdit->setReadOnly(true);
     gridLayout->addWidget(m_timestampEdit, row++, 1);
     
-    // 程序计数器值
-    gridLayout->addWidget(new QLabel("程序计数器值(PC):", contentWidget), row, 0);
-    m_pcValueEdit = new QLineEdit(contentWidget);
-    m_pcValueEdit->setReadOnly(true);
-    gridLayout->addWidget(m_pcValueEdit, row++, 1);
-    
     // 堆栈指针值
     gridLayout->addWidget(new QLabel("堆栈指针值(SP):", contentWidget), row, 0);
     m_spValueEdit = new QLineEdit(contentWidget);
     m_spValueEdit->setReadOnly(true);
     gridLayout->addWidget(m_spValueEdit, row++, 1);
     
+    // r0寄存器值
+    gridLayout->addWidget(new QLabel("r0寄存器值:", contentWidget), row, 0);
+    m_r0ValueEdit = new QLineEdit(contentWidget);
+    m_r0ValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_r0ValueEdit, row++, 1);
+    
+    // r1寄存器值
+    gridLayout->addWidget(new QLabel("r1寄存器值:", contentWidget), row, 0);
+    m_r1ValueEdit = new QLineEdit(contentWidget);
+    m_r1ValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_r1ValueEdit, row++, 1);
+    
+    // r2寄存器值
+    gridLayout->addWidget(new QLabel("r2寄存器值:", contentWidget), row, 0);
+    m_r2ValueEdit = new QLineEdit(contentWidget);
+    m_r2ValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_r2ValueEdit, row++, 1);
+    
+    // r3寄存器值
+    gridLayout->addWidget(new QLabel("r3寄存器值:", contentWidget), row, 0);
+    m_r3ValueEdit = new QLineEdit(contentWidget);
+    m_r3ValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_r3ValueEdit, row++, 1);
+    
+    // r12寄存器值
+    gridLayout->addWidget(new QLabel("r12寄存器值:", contentWidget), row, 0);
+    m_r12ValueEdit = new QLineEdit(contentWidget);
+    m_r12ValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_r12ValueEdit, row++, 1);
+    
     // 链接寄存器值
     gridLayout->addWidget(new QLabel("链接寄存器值(LR):", contentWidget), row, 0);
     m_lrValueEdit = new QLineEdit(contentWidget);
     m_lrValueEdit->setReadOnly(true);
     gridLayout->addWidget(m_lrValueEdit, row++, 1);
+    
+    // 程序计数器值
+    gridLayout->addWidget(new QLabel("程序计数器值(PC):", contentWidget), row, 0);
+    m_pcValueEdit = new QLineEdit(contentWidget);
+    m_pcValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_pcValueEdit, row++, 1);
+    
+    // xpsr寄存器值
+    gridLayout->addWidget(new QLabel("xpsr寄存器值:", contentWidget), row, 0);
+    m_xpsrValueEdit = new QLineEdit(contentWidget);
+    m_xpsrValueEdit->setReadOnly(true);
+    gridLayout->addWidget(m_xpsrValueEdit, row++, 1);
     
     // 故障计数器
     gridLayout->addWidget(new QLabel("故障计数器:", contentWidget), row, 0);
@@ -684,9 +726,15 @@ void StatusWidget::displayHardFaultInfo(const hardfault_info_t& hardFaultData)
     // 更新HardFault信息显示
     m_magicNumberEdit->setText(formatHexValue(hardFaultData.magic_number));
     m_timestampEdit->setText(formatTimestamp(hardFaultData.timestamp));
-    m_pcValueEdit->setText(formatHexValue(hardFaultData.pc_value));
     m_spValueEdit->setText(formatHexValue(hardFaultData.sp_value));
+    m_r0ValueEdit->setText(formatHexValue(hardFaultData.r0_value));
+    m_r1ValueEdit->setText(formatHexValue(hardFaultData.r1_value));
+    m_r2ValueEdit->setText(formatHexValue(hardFaultData.r2_value));
+    m_r3ValueEdit->setText(formatHexValue(hardFaultData.r3_value));
+    m_r12ValueEdit->setText(formatHexValue(hardFaultData.r12_value));
     m_lrValueEdit->setText(formatHexValue(hardFaultData.lr_value));
+    m_pcValueEdit->setText(formatHexValue(hardFaultData.pc_value));
+    m_xpsrValueEdit->setText(formatHexValue(hardFaultData.xpsr_value));
     m_faultCountEdit->setText(QString::number(hardFaultData.fault_count));
     
     // 更新时间戳

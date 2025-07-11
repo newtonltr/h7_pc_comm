@@ -83,9 +83,15 @@ private:
     QScrollArea* m_hardFaultScrollArea;
     QLineEdit* m_magicNumberEdit;
     QLineEdit* m_timestampEdit;
-    QLineEdit* m_pcValueEdit;
     QLineEdit* m_spValueEdit;
+    QLineEdit* m_r0ValueEdit;
+    QLineEdit* m_r1ValueEdit;
+    QLineEdit* m_r2ValueEdit;
+    QLineEdit* m_r3ValueEdit;
+    QLineEdit* m_r12ValueEdit;
     QLineEdit* m_lrValueEdit;
+    QLineEdit* m_pcValueEdit;
+    QLineEdit* m_xpsrValueEdit;
     QLineEdit* m_faultCountEdit;
     QLabel* m_hardFaultLastUpdateLabel;
     
