@@ -13,8 +13,82 @@ StatusWidget::StatusWidget(QWidget *parent)
     , m_displayTabWidget(nullptr)
     , m_hardFaultTab(nullptr)
     , m_hardFaultScrollArea(nullptr)
+    , m_magicNumberEdit(nullptr)
+    , m_timestampEdit(nullptr)
+    , m_pcValueEdit(nullptr)
+    , m_spValueEdit(nullptr)
+    , m_lrValueEdit(nullptr)
+    , m_faultCountEdit(nullptr)
+    , m_hardFaultLastUpdateLabel(nullptr)
     , m_vcuTab(nullptr)
     , m_vcuScrollArea(nullptr)
+    , m_softwareVersionEdit(nullptr)
+    , m_hardwareVersionEdit(nullptr)
+    , m_bootVersionEdit(nullptr)
+    , m_electricEdit(nullptr)
+    , m_voltageEdit(nullptr)
+    , m_currentEdit(nullptr)
+    , m_wirelessVoltageEdit(nullptr)
+    , m_wirelessCurrentEdit(nullptr)
+    , m_temperatureEdit(nullptr)
+    , m_humidityEdit(nullptr)
+    , m_ipAddressEdit(nullptr)
+    , m_portEdit(nullptr)
+    , m_crashHeadEdit(nullptr)
+    , m_crashRearEdit(nullptr)
+    , m_proximityEdit(nullptr)
+    , m_emergencyStopEdit(nullptr)
+    , m_ctrlModeEdit(nullptr)
+    , m_clearModeEdit(nullptr)
+    , m_joyVcEdit(nullptr)
+    , m_joyVwEdit(nullptr)
+    , m_twistVcEdit(nullptr)
+    , m_twistVwEdit(nullptr)
+    , m_batTemperatureEdit(nullptr)
+    , m_cmdVcEdit(nullptr)
+    , m_cmdVwEdit(nullptr)
+    , m_devLockStaEdit(nullptr)
+    , m_fireSensorEdit(nullptr)
+    , m_fallSensorEdit(nullptr)
+    , m_ultrasonicFEdit(nullptr)
+    , m_ultrasonicREdit(nullptr)
+    , m_ultrasonicTlEdit(nullptr)
+    , m_ultrasonicTrEdit(nullptr)
+    , m_lifterHEdit(nullptr)
+    , m_airH2sEdit(nullptr)
+    , m_airCoEdit(nullptr)
+    , m_airO2Edit(nullptr)
+    , m_airExEdit(nullptr)
+    , m_airEdcEdit(nullptr)
+    , m_airC2h4Edit(nullptr)
+    , m_airHclEdit(nullptr)
+    , m_airCl2Edit(nullptr)
+    , m_airC3h6Edit(nullptr)
+    , m_airH2Edit(nullptr)
+    , m_airTempEdit(nullptr)
+    , m_airHumEdit(nullptr)
+    , m_airSf6Edit(nullptr)
+    , m_cocl2Edit(nullptr)
+    , m_c2h6oEdit(nullptr)
+    , m_ch4Edit(nullptr)
+    , m_drv0CurrentCh0Edit(nullptr)
+    , m_drv0CurrentCh1Edit(nullptr)
+    , m_drv1CurrentCh0Edit(nullptr)
+    , m_drv1CurrentCh1Edit(nullptr)
+    , m_joyCh0Edit(nullptr)
+    , m_joyCh1Edit(nullptr)
+    , m_joyCh2Edit(nullptr)
+    , m_joyCh3Edit(nullptr)
+    , m_serialNumber0Edit(nullptr)
+    , m_serialNumber1Edit(nullptr)
+    , m_serialNumber2Edit(nullptr)
+    , m_stsBmsEdit(nullptr)
+    , m_flagAirInvailEdit(nullptr)
+    , m_lfMotorCurrentEdit(nullptr)
+    , m_rfMotorCurrentEdit(nullptr)
+    , m_rrMotorCurrentEdit(nullptr)
+    , m_lrMotorCurrentEdit(nullptr)
+    , m_vcuLastUpdateLabel(nullptr)
     , m_isReading(false)
     , m_statusTimer(nullptr)
 {
@@ -312,6 +386,201 @@ void StatusWidget::initializeVcuTab()
     m_ultrasonicTrEdit->setReadOnly(true);
     gridLayout->addWidget(m_ultrasonicTrEdit, row++, 1);
     
+    // 气体传感器组
+    QLabel* gasGroupLabel = new QLabel("气体传感器", contentWidget);
+    gasGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(gasGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("air_h2s:", contentWidget), row, 0);
+    m_airH2sEdit = new QLineEdit(contentWidget);
+    m_airH2sEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airH2sEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_co:", contentWidget), row, 0);
+    m_airCoEdit = new QLineEdit(contentWidget);
+    m_airCoEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airCoEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_o2:", contentWidget), row, 0);
+    m_airO2Edit = new QLineEdit(contentWidget);
+    m_airO2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airO2Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_ex:", contentWidget), row, 0);
+    m_airExEdit = new QLineEdit(contentWidget);
+    m_airExEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airExEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_edc:", contentWidget), row, 0);
+    m_airEdcEdit = new QLineEdit(contentWidget);
+    m_airEdcEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airEdcEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_c2h4:", contentWidget), row, 0);
+    m_airC2h4Edit = new QLineEdit(contentWidget);
+    m_airC2h4Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airC2h4Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_hcl:", contentWidget), row, 0);
+    m_airHclEdit = new QLineEdit(contentWidget);
+    m_airHclEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airHclEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_cl2:", contentWidget), row, 0);
+    m_airCl2Edit = new QLineEdit(contentWidget);
+    m_airCl2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airCl2Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_c3h6:", contentWidget), row, 0);
+    m_airC3h6Edit = new QLineEdit(contentWidget);
+    m_airC3h6Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airC3h6Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_h2:", contentWidget), row, 0);
+    m_airH2Edit = new QLineEdit(contentWidget);
+    m_airH2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airH2Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_temp:", contentWidget), row, 0);
+    m_airTempEdit = new QLineEdit(contentWidget);
+    m_airTempEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airTempEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_hum:", contentWidget), row, 0);
+    m_airHumEdit = new QLineEdit(contentWidget);
+    m_airHumEdit->setReadOnly(true);
+    gridLayout->addWidget(m_airHumEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("air_sf6:", contentWidget), row, 0);
+    m_airSf6Edit = new QLineEdit(contentWidget);
+    m_airSf6Edit->setReadOnly(true);
+    gridLayout->addWidget(m_airSf6Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("cocl2:", contentWidget), row, 0);
+    m_cocl2Edit = new QLineEdit(contentWidget);
+    m_cocl2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_cocl2Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("c2h6o:", contentWidget), row, 0);
+    m_c2h6oEdit = new QLineEdit(contentWidget);
+    m_c2h6oEdit->setReadOnly(true);
+    gridLayout->addWidget(m_c2h6oEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("ch4:", contentWidget), row, 0);
+    m_ch4Edit = new QLineEdit(contentWidget);
+    m_ch4Edit->setReadOnly(true);
+    gridLayout->addWidget(m_ch4Edit, row++, 1);
+    
+    // 驱动器电流组
+    QLabel* driverGroupLabel = new QLabel("驱动器电流", contentWidget);
+    driverGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(driverGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("drv0_current_ch0:", contentWidget), row, 0);
+    m_drv0CurrentCh0Edit = new QLineEdit(contentWidget);
+    m_drv0CurrentCh0Edit->setReadOnly(true);
+    gridLayout->addWidget(m_drv0CurrentCh0Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("drv0_current_ch1:", contentWidget), row, 0);
+    m_drv0CurrentCh1Edit = new QLineEdit(contentWidget);
+    m_drv0CurrentCh1Edit->setReadOnly(true);
+    gridLayout->addWidget(m_drv0CurrentCh1Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("drv1_current_ch0:", contentWidget), row, 0);
+    m_drv1CurrentCh0Edit = new QLineEdit(contentWidget);
+    m_drv1CurrentCh0Edit->setReadOnly(true);
+    gridLayout->addWidget(m_drv1CurrentCh0Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("drv1_current_ch1:", contentWidget), row, 0);
+    m_drv1CurrentCh1Edit = new QLineEdit(contentWidget);
+    m_drv1CurrentCh1Edit->setReadOnly(true);
+    gridLayout->addWidget(m_drv1CurrentCh1Edit, row++, 1);
+    
+    // 遥控器通道组
+    QLabel* joyChannelGroupLabel = new QLabel("遥控器通道", contentWidget);
+    joyChannelGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(joyChannelGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("joy_ch0:", contentWidget), row, 0);
+    m_joyCh0Edit = new QLineEdit(contentWidget);
+    m_joyCh0Edit->setReadOnly(true);
+    gridLayout->addWidget(m_joyCh0Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("joy_ch1:", contentWidget), row, 0);
+    m_joyCh1Edit = new QLineEdit(contentWidget);
+    m_joyCh1Edit->setReadOnly(true);
+    gridLayout->addWidget(m_joyCh1Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("joy_ch2:", contentWidget), row, 0);
+    m_joyCh2Edit = new QLineEdit(contentWidget);
+    m_joyCh2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_joyCh2Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("joy_ch3:", contentWidget), row, 0);
+    m_joyCh3Edit = new QLineEdit(contentWidget);
+    m_joyCh3Edit->setReadOnly(true);
+    gridLayout->addWidget(m_joyCh3Edit, row++, 1);
+    
+    // 序列号组
+    QLabel* serialGroupLabel = new QLabel("序列号", contentWidget);
+    serialGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(serialGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("serial_number[0]:", contentWidget), row, 0);
+    m_serialNumber0Edit = new QLineEdit(contentWidget);
+    m_serialNumber0Edit->setReadOnly(true);
+    gridLayout->addWidget(m_serialNumber0Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("serial_number[1]:", contentWidget), row, 0);
+    m_serialNumber1Edit = new QLineEdit(contentWidget);
+    m_serialNumber1Edit->setReadOnly(true);
+    gridLayout->addWidget(m_serialNumber1Edit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("serial_number[2]:", contentWidget), row, 0);
+    m_serialNumber2Edit = new QLineEdit(contentWidget);
+    m_serialNumber2Edit->setReadOnly(true);
+    gridLayout->addWidget(m_serialNumber2Edit, row++, 1);
+    
+    // BMS和标志位组
+    QLabel* bmsGroupLabel = new QLabel("BMS和标志位", contentWidget);
+    bmsGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(bmsGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("sts_bms:", contentWidget), row, 0);
+    m_stsBmsEdit = new QLineEdit(contentWidget);
+    m_stsBmsEdit->setReadOnly(true);
+    gridLayout->addWidget(m_stsBmsEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("flag_air_invail:", contentWidget), row, 0);
+    m_flagAirInvailEdit = new QLineEdit(contentWidget);
+    m_flagAirInvailEdit->setReadOnly(true);
+    gridLayout->addWidget(m_flagAirInvailEdit, row++, 1);
+    
+    // 电机电流组
+    QLabel* motorCurrentGroupLabel = new QLabel("电机电流", contentWidget);
+    motorCurrentGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
+    gridLayout->addWidget(motorCurrentGroupLabel, row++, 0, 1, 2);
+    
+    gridLayout->addWidget(new QLabel("lf_motor_current:", contentWidget), row, 0);
+    m_lfMotorCurrentEdit = new QLineEdit(contentWidget);
+    m_lfMotorCurrentEdit->setReadOnly(true);
+    gridLayout->addWidget(m_lfMotorCurrentEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("rf_motor_current:", contentWidget), row, 0);
+    m_rfMotorCurrentEdit = new QLineEdit(contentWidget);
+    m_rfMotorCurrentEdit->setReadOnly(true);
+    gridLayout->addWidget(m_rfMotorCurrentEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("rr_motor_current:", contentWidget), row, 0);
+    m_rrMotorCurrentEdit = new QLineEdit(contentWidget);
+    m_rrMotorCurrentEdit->setReadOnly(true);
+    gridLayout->addWidget(m_rrMotorCurrentEdit, row++, 1);
+    
+    gridLayout->addWidget(new QLabel("lr_motor_current:", contentWidget), row, 0);
+    m_lrMotorCurrentEdit = new QLineEdit(contentWidget);
+    m_lrMotorCurrentEdit->setReadOnly(true);
+    gridLayout->addWidget(m_lrMotorCurrentEdit, row++, 1);
+    
     // 控制信息组
     QLabel* controlGroupLabel = new QLabel("控制信息", contentWidget);
     controlGroupLabel->setStyleSheet("font-weight: bold; color: blue; margin-top: 10px;");
@@ -436,34 +705,79 @@ void StatusWidget::displayVcuInfo(const state_def_t& vcuData)
     m_bootVersionEdit->setText(formatVersion(vcuData.boot_version, 16));
     
     // 电源信息
-    m_electricEdit->setText(QString::number(vcuData.electric) + "%");
-    m_voltageEdit->setText(formatFloatValue(vcuData.voltage, 2) + "V");
-    m_currentEdit->setText(formatFloatValue(vcuData.current, 2) + "A");
-    m_wirelessVoltageEdit->setText(formatFloatValue(vcuData.wireless_voltage, 2) + "V");
-    m_wirelessCurrentEdit->setText(formatFloatValue(vcuData.wireless_current, 2) + "A");
-    m_batTemperatureEdit->setText(formatFloatValue(vcuData.bat_temperature, 1) + "℃");
+    m_electricEdit->setText(QString::number(vcuData.electric));
+    m_voltageEdit->setText(formatFloatValue(vcuData.voltage, 2));
+    m_currentEdit->setText(formatFloatValue(vcuData.current, 2));
+    m_wirelessVoltageEdit->setText(formatFloatValue(vcuData.wireless_voltage, 2));
+    m_wirelessCurrentEdit->setText(formatFloatValue(vcuData.wireless_current, 2));
+    m_batTemperatureEdit->setText(formatFloatValue(vcuData.bat_temperature, 2));
     
     // 环境信息
-    m_temperatureEdit->setText(formatFloatValue(vcuData.temperature, 1) + "℃");
-    m_humidityEdit->setText(formatFloatValue(vcuData.humidity, 1) + "%");
+    m_temperatureEdit->setText(formatFloatValue(vcuData.temperature, 2));
+    m_humidityEdit->setText(formatFloatValue(vcuData.humidity, 2));
     
     // 网络信息
     m_ipAddressEdit->setText(formatIpAddress(vcuData.ip));
     m_portEdit->setText(QString::number(vcuData.port));
     
     // 传感器状态
-    m_crashHeadEdit->setText(formatBoolValue(vcuData.crash_head));
-    m_crashRearEdit->setText(formatBoolValue(vcuData.crash_rear));
-    m_proximityEdit->setText(formatBoolValue(vcuData.proximity));
-    m_emergencyStopEdit->setText(formatBoolValue(vcuData.emergency_stop));
-    m_fireSensorEdit->setText(formatBoolValue(vcuData.fire_sensor));
-    m_fallSensorEdit->setText(formatBoolValue(vcuData.fall_sensor));
+    m_crashHeadEdit->setText(QString::number(vcuData.crash_head));
+    m_crashRearEdit->setText(QString::number(vcuData.crash_rear));
+    m_proximityEdit->setText(QString::number(vcuData.proximity));
+    m_emergencyStopEdit->setText(QString::number(vcuData.emergency_stop));
+    m_fireSensorEdit->setText(QString::number(vcuData.fire_sensor));
+    m_fallSensorEdit->setText(QString::number(vcuData.fall_sensor));
     
     // 超声波传感器
-    m_ultrasonicFEdit->setText(formatBoolValue(vcuData.ultrasonic_f));
-    m_ultrasonicREdit->setText(formatBoolValue(vcuData.ultrasonic_r));
-    m_ultrasonicTlEdit->setText(formatBoolValue(vcuData.ultrasonic_tl));
-    m_ultrasonicTrEdit->setText(formatBoolValue(vcuData.ultrasonic_tr));
+    m_ultrasonicFEdit->setText(QString::number(vcuData.ultrasonic_f));
+    m_ultrasonicREdit->setText(QString::number(vcuData.ultrasonic_r));
+    m_ultrasonicTlEdit->setText(QString::number(vcuData.ultrasonic_tl));
+    m_ultrasonicTrEdit->setText(QString::number(vcuData.ultrasonic_tr));
+    
+    // 气体传感器数据
+    m_airH2sEdit->setText(formatFloatValue(vcuData.air_h2s, 2));
+    m_airCoEdit->setText(formatFloatValue(vcuData.air_co, 2));
+    m_airO2Edit->setText(formatFloatValue(vcuData.air_o2, 2));
+    m_airExEdit->setText(formatFloatValue(vcuData.air_ex, 2));
+    m_airEdcEdit->setText(formatFloatValue(vcuData.air_edc, 2));
+    m_airC2h4Edit->setText(formatFloatValue(vcuData.air_c2h4, 2));
+    m_airHclEdit->setText(formatFloatValue(vcuData.air_hcl, 2));
+    m_airCl2Edit->setText(formatFloatValue(vcuData.air_cl2, 2));
+    m_airC3h6Edit->setText(formatFloatValue(vcuData.air_c3h6, 2));
+    m_airH2Edit->setText(formatFloatValue(vcuData.air_h2, 2));
+    m_airTempEdit->setText(formatFloatValue(vcuData.air_temp, 2));
+    m_airHumEdit->setText(formatFloatValue(vcuData.air_hum, 2));
+    m_airSf6Edit->setText(formatFloatValue(vcuData.air_sf6, 2));
+    m_cocl2Edit->setText(formatFloatValue(vcuData.cocl2, 2));
+    m_c2h6oEdit->setText(formatFloatValue(vcuData.c2h6o, 2));
+    m_ch4Edit->setText(formatFloatValue(vcuData.ch4, 2));
+    
+    // 驱动器电流数据
+    m_drv0CurrentCh0Edit->setText(formatFloatValue(vcuData.drv0_current_ch0, 2));
+    m_drv0CurrentCh1Edit->setText(formatFloatValue(vcuData.drv0_current_ch1, 2));
+    m_drv1CurrentCh0Edit->setText(formatFloatValue(vcuData.drv1_current_ch0, 2));
+    m_drv1CurrentCh1Edit->setText(formatFloatValue(vcuData.drv1_current_ch1, 2));
+    
+    // 遥控器通道数据
+    m_joyCh0Edit->setText(formatFloatValue(vcuData.joy_ch0, 2));
+    m_joyCh1Edit->setText(formatFloatValue(vcuData.joy_ch1, 2));
+    m_joyCh2Edit->setText(formatFloatValue(vcuData.joy_ch2, 2));
+    m_joyCh3Edit->setText(formatFloatValue(vcuData.joy_ch3, 2));
+    
+    // 序列号数据
+    m_serialNumber0Edit->setText(formatHexValue(vcuData.serial_number[0]));
+    m_serialNumber1Edit->setText(formatHexValue(vcuData.serial_number[1]));
+    m_serialNumber2Edit->setText(formatHexValue(vcuData.serial_number[2]));
+    
+    // BMS和标志位
+    m_stsBmsEdit->setText(formatHexValue(vcuData.sts_bms));
+    m_flagAirInvailEdit->setText(QString::number(vcuData.flag_air_invail));
+    
+    // 电机电流数据
+    m_lfMotorCurrentEdit->setText(formatFloatValue(vcuData.lf_motor_current, 2));
+    m_rfMotorCurrentEdit->setText(formatFloatValue(vcuData.rf_motor_current, 2));
+    m_rrMotorCurrentEdit->setText(formatFloatValue(vcuData.rr_motor_current, 2));
+    m_lrMotorCurrentEdit->setText(formatFloatValue(vcuData.lr_motor_current, 2));
     
     // 控制信息
     m_ctrlModeEdit->setText(QString::number(vcuData.ctrl_mode));
@@ -476,7 +790,7 @@ void StatusWidget::displayVcuInfo(const state_def_t& vcuData)
     m_cmdVwEdit->setText(formatFloatValue(vcuData.cmd_vw, 3));
     
     // 设备状态
-    m_devLockStaEdit->setText(formatBoolValue(vcuData.dev_lock_sta));
+    m_devLockStaEdit->setText(QString::number(vcuData.dev_lock_sta));
     m_lifterHEdit->setText(QString::number(vcuData.lifter_h));
     
     // 更新时间戳

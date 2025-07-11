@@ -127,14 +127,14 @@ void ConfigWidget::initializeSocketGroup()
     
     // IP地址
     layout->addWidget(new QLabel("IP地址:"), 0, 0);
-    m_hostEdit = new QLineEdit("192.168.1.111", m_socketGroupBox);
+    m_hostEdit = new QLineEdit("192.168.1.135", m_socketGroupBox);
     layout->addWidget(m_hostEdit, 0, 1);
     
     // 端口
     layout->addWidget(new QLabel("端口:"), 1, 0);
     m_portSpinBox = new QSpinBox(m_socketGroupBox);
     m_portSpinBox->setRange(1, 65535);
-    m_portSpinBox->setValue(7000);
+    m_portSpinBox->setValue(65000);
     layout->addWidget(m_portSpinBox, 1, 1);
     
     // 超时时间

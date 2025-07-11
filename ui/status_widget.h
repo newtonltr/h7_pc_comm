@@ -125,6 +125,52 @@ private:
     QLineEdit* m_ultrasonicTlEdit;
     QLineEdit* m_ultrasonicTrEdit;
     QLineEdit* m_lifterHEdit;
+    
+    // 气体传感器数据
+    QLineEdit* m_airH2sEdit;
+    QLineEdit* m_airCoEdit;
+    QLineEdit* m_airO2Edit;
+    QLineEdit* m_airExEdit;
+    QLineEdit* m_airEdcEdit;
+    QLineEdit* m_airC2h4Edit;
+    QLineEdit* m_airHclEdit;
+    QLineEdit* m_airCl2Edit;
+    QLineEdit* m_airC3h6Edit;
+    QLineEdit* m_airH2Edit;
+    QLineEdit* m_airTempEdit;
+    QLineEdit* m_airHumEdit;
+    QLineEdit* m_airSf6Edit;
+    QLineEdit* m_cocl2Edit;
+    QLineEdit* m_c2h6oEdit;
+    QLineEdit* m_ch4Edit;
+    
+    // 驱动器电流数据
+    QLineEdit* m_drv0CurrentCh0Edit;
+    QLineEdit* m_drv0CurrentCh1Edit;
+    QLineEdit* m_drv1CurrentCh0Edit;
+    QLineEdit* m_drv1CurrentCh1Edit;
+    
+    // 遥控器通道数据
+    QLineEdit* m_joyCh0Edit;
+    QLineEdit* m_joyCh1Edit;
+    QLineEdit* m_joyCh2Edit;
+    QLineEdit* m_joyCh3Edit;
+    
+    // 序列号数据
+    QLineEdit* m_serialNumber0Edit;
+    QLineEdit* m_serialNumber1Edit;
+    QLineEdit* m_serialNumber2Edit;
+    
+    // BMS和标志位
+    QLineEdit* m_stsBmsEdit;
+    QLineEdit* m_flagAirInvailEdit;
+    
+    // 电机电流数据
+    QLineEdit* m_lfMotorCurrentEdit;
+    QLineEdit* m_rfMotorCurrentEdit;
+    QLineEdit* m_rrMotorCurrentEdit;
+    QLineEdit* m_lrMotorCurrentEdit;
+    
     QLabel* m_vcuLastUpdateLabel;
     
     // 状态管理
