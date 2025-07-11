@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include "ui/config_widget.h"
 #include "ui/debug_widget.h"
+#include "ui/status_widget.h"
 #include "communication/serial_thread.h"
 #include "communication/socket_thread.h"
 #include "protocol/protocol_frame.h"
@@ -45,6 +46,10 @@ private slots:
     void onGatewayAddressSetRequested(const QString& gatewayAddress);
     void onVcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
     
+    // 状态读取槽函数
+    void onHardFaultInfoReadRequested();
+    void onVcuInfoReadRequested();
+    
     // 串口通信槽函数
     void onSerialDataReceived(const QByteArray& data);
     void onSerialDataSent(const QByteArray& data);
@@ -66,6 +71,7 @@ private:
     // UI组件
     ConfigWidget* m_configWidget;
     DebugWidget* m_debugWidget;
+    StatusWidget* m_statusWidget;
     QLabel* m_statusLabel;
     QLabel* m_timeLabel;
     QTimer* m_statusTimer;

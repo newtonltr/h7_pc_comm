@@ -76,9 +76,19 @@ QByteArray ProtocolFrame::buildVcuParamSetFrame(const QString& rearObstacleDista
     return buildFrame(PC_VCU_PARAM_SET, vcuParamData);
 }
 
+QByteArray ProtocolFrame::buildHardFaultInfoGetFrame()
+{
+    // HardFault信息获取请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_HARDFAULT_INFO_GET, emptyData);
+}
 
-
-
+QByteArray ProtocolFrame::buildVcuInfoGetFrame()
+{
+    // VCU信息获取请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_VCU_INFO_GET, emptyData);
+}
 
 ProtocolFrame::ParsedData ProtocolFrame::parseFrame(const QByteArray& frameData)
 {

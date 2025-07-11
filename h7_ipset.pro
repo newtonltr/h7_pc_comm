@@ -14,18 +14,24 @@ SOURCES += \
     pc_protocol.c \
     protocol/protocol_frame.cpp \
     communication/serial_thread.cpp \
+    communication/serial_worker.cpp \
     communication/socket_thread.cpp \
+    communication/socket_worker.cpp \
     ui/config_widget.cpp \
-    ui/debug_widget.cpp
+    ui/debug_widget.cpp \
+    ui/status_widget.cpp
 
 HEADERS += \
     mainwindow.h \
     pc_protocol.h \
     protocol/protocol_frame.h \
     communication/serial_thread.h \
+    communication/serial_worker.h \
     communication/socket_thread.h \
+    communication/socket_worker.h \
     ui/config_widget.h \
-    ui/debug_widget.h
+    ui/debug_widget.h \
+    ui/status_widget.h
 
 FORMS += \
     mainwindow.ui

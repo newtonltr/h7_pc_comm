@@ -69,6 +69,9 @@ void MainWindow::setupUI()
     // 创建调试组件
     m_debugWidget = new DebugWidget(this);
     
+    // 创建状态读取组件
+    m_statusWidget = new StatusWidget(this);
+    
     // 将组件添加到Tab页面中
     QVBoxLayout* configLayout = qobject_cast<QVBoxLayout*>(ui->configTab->layout());
     if (configLayout) {
@@ -90,6 +93,17 @@ void MainWindow::setupUI()
         
         // 添加调试组件
         debugLayout->addWidget(m_debugWidget);
+    }
+    
+    QVBoxLayout* statusLayout = qobject_cast<QVBoxLayout*>(ui->statusTab->layout());
+    if (statusLayout) {
+        // 移除占位符
+        QWidget* placeholder = ui->statusWidgetPlaceholder;
+        statusLayout->removeWidget(placeholder);
+        placeholder->deleteLater();
+        
+        // 添加状态读取组件
+        statusLayout->addWidget(m_statusWidget);
     }
     
     // 设置初始Tab页面
@@ -148,6 +162,13 @@ void MainWindow::setupConnections()
             this, &MainWindow::onGatewayAddressSetRequested);
     connect(m_configWidget, &ConfigWidget::vcuParamSetRequested,
             this, &MainWindow::onVcuParamSetRequested);
+    
+    // 状态读取组件信号连接
+    connect(m_statusWidget, &StatusWidget::hardFaultInfoReadRequested,
+            this, &MainWindow::onHardFaultInfoReadRequested);
+    connect(m_statusWidget, &StatusWidget::vcuInfoReadRequested,
+            this, &MainWindow::onVcuInfoReadRequested);
+    
     // 串口通信信号连接
     connect(m_serialThread, &SerialThread::dataReceived,
             this, &MainWindow::onSerialDataReceived);
@@ -390,6 +411,37 @@ void MainWindow::onVcuParamSetRequested(const QString& rearObstacleDistance, con
     }
 }
 
+// 状态读取槽函数
+void MainWindow::onHardFaultInfoReadRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildHardFaultInfoGetFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("HardFault故障信息读取命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("HardFault故障信息发送失败");
+    }
+}
+
+void MainWindow::onVcuInfoReadRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildVcuInfoGetFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("VCU综合信息读取命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("VCU综合信息发送失败");
+    }
+}
+
 // 串口通信槽函数
 void MainWindow::onSerialDataReceived(const QByteArray& data)
 {
@@ -508,7 +560,39 @@ void MainWindow::processReceivedFrame(const QByteArray& frameData)
                       .arg(parsedData.functionCode, 4, 16, QChar('0'))
                       .arg(parsedData.data.size());
         m_debugWidget->addStatusMessage(info);
+        
+        // 处理特定功能码的响应数据
+        switch (parsedData.functionCode) {
+            case PC_HARDFAULT_INFO_GET:
+                if (parsedData.data.size() == sizeof(hardfault_info_t)) {
+                    const hardfault_info_t* hardFaultInfo = 
+                        reinterpret_cast<const hardfault_info_t*>(parsedData.data.constData());
+                    m_statusWidget->displayHardFaultInfo(*hardFaultInfo);
+                    m_debugWidget->addStatusMessage("HardFault故障信息解析成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("HardFault数据长度错误: 期望 %1, 实际 %2")
+                                                   .arg(sizeof(hardfault_info_t)).arg(parsedData.data.size()));
+                }
+                break;
+                
+            case PC_VCU_INFO_GET:
+                if (parsedData.data.size() == sizeof(state_def_t)) {
+                    const state_def_t* vcuInfo = 
+                        reinterpret_cast<const state_def_t*>(parsedData.data.constData());
+                    m_statusWidget->displayVcuInfo(*vcuInfo);
+                    m_debugWidget->addStatusMessage("VCU综合信息解析成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("VCU数据长度错误: 期望 %1, 实际 %2")
+                                                   .arg(sizeof(state_def_t)).arg(parsedData.data.size()));
+                }
+                break;
+                
+            default:
+                // 其他功能码的处理保持原样
+                break;
+        }
     } else {
         m_debugWidget->addErrorMessage(QString("帧解析失败: %1").arg(parsedData.errorMessage));
+        m_statusWidget->showErrorMessage(QString("数据解析失败: %1").arg(parsedData.errorMessage));
     }
 }

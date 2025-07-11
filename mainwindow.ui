@@ -58,6 +58,23 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="statusTab">
+       <attribute name="title">
+        <string>状态读取</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="statusTabLayout">
+        <item>
+         <widget class="QWidget" name="statusWidgetPlaceholder" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
