@@ -31,6 +31,12 @@ public:
     void displayHardFaultInfo(const hardfault_info_t& hardFaultData);
     void displayVcuInfo(const state_def_t& vcuData);
     
+    // 网络配置显示方法
+    void displayMacAddress(const QByteArray& macData);
+    void displayIpAddress(const QByteArray& ipData);
+    void displayMaskAddress(const QByteArray& maskData);
+    void displayGatewayAddress(const QByteArray& gatewayData);
+    
     // 状态管理
     void setReadingStatus(bool isReading, const QString& message = QString());
     void showErrorMessage(const QString& error);
@@ -39,11 +45,23 @@ signals:
     // 请求信号
     void hardFaultInfoReadRequested();
     void vcuInfoReadRequested();
+    
+    // 网络配置查询请求信号
+    void macAddressQueryRequested();
+    void ipAddressQueryRequested();
+    void maskAddressQueryRequested();
+    void gatewayAddressQueryRequested();
 
 private slots:
     // 按键槽函数
     void onHardFaultReadClicked();
     void onVcuReadClicked();
+    
+    // 网络配置查询按键槽函数
+    void onMacQueryClicked();
+    void onIpQueryClicked();
+    void onMaskQueryClicked();
+    void onGatewayQueryClicked();
     
     // 状态更新
     void updateStatusDisplay();
@@ -55,6 +73,7 @@ private:
     void initializeDisplayTabs();
     void initializeHardFaultTab();
     void initializeVcuTab();
+    void initializeNetworkConfigTab();
     void setupConnections();
     
     // 数据格式化工具
@@ -178,6 +197,19 @@ private:
     QLineEdit* m_lrMotorCurrentEdit;
     
     QLabel* m_vcuLastUpdateLabel;
+    
+    // 网络配置标签页
+    QWidget* m_networkConfigTab;
+    QScrollArea* m_networkConfigScrollArea;
+    QPushButton* m_macQueryBtn;
+    QPushButton* m_ipQueryBtn;
+    QPushButton* m_maskQueryBtn;
+    QPushButton* m_gatewayQueryBtn;
+    QLineEdit* m_queryMacAddressEdit;
+    QLineEdit* m_queryIpAddressEdit;
+    QLineEdit* m_queryMaskAddressEdit;
+    QLineEdit* m_queryGatewayAddressEdit;
+    QLabel* m_networkConfigLastUpdateLabel;
     
     // 状态管理
     bool m_isReading;

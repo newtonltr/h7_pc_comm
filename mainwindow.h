@@ -50,6 +50,12 @@ private slots:
     void onHardFaultInfoReadRequested();
     void onVcuInfoReadRequested();
     
+    // 网络配置查询槽函数
+    void onMacAddressQueryRequested();
+    void onIpAddressQueryRequested();
+    void onMaskAddressQueryRequested();
+    void onGatewayAddressQueryRequested();
+    
     // 串口通信槽函数
     void onSerialDataReceived(const QByteArray& data);
     void onSerialDataSent(const QByteArray& data);

@@ -170,7 +170,7 @@ void ConfigWidget::initializeParameterGroup()
     macLayout->addWidget(m_setMacBtn, 0, 2);
     
     macLayout->addWidget(new QLabel("完整MAC:"), 1, 0);
-    m_macDisplayLabel = new QLabel("02:00:00:00:00:01", m_macGroupBox);
+    m_macDisplayLabel = new QLabel("01:00:00:00:00:02", m_macGroupBox);
     m_macDisplayLabel->setStyleSheet("QLabel { color: blue; font-weight: bold; }");
     macLayout->addWidget(m_macDisplayLabel, 1, 1, 1, 2);
     
@@ -282,9 +282,9 @@ void ConfigWidget::setupConnections()
         bool ok;
         int value = text.toInt(&ok);
         if (ok && value >= 0 && value <= 255) {
-            m_macDisplayLabel->setText(QString("02:00:00:00:00:%1").arg(value, 2, 16, QChar('0')).toUpper());
+            m_macDisplayLabel->setText(QString("%1:00:00:00:00:02").arg(value, 2, 16, QChar('0')).toUpper());
         } else {
-            m_macDisplayLabel->setText("02:00:00:00:00:01");
+            m_macDisplayLabel->setText("01:00:00:00:00:02");
         }
     });
 }

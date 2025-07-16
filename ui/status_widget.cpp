@@ -166,9 +166,11 @@ void StatusWidget::initializeDisplayTabs()
     
     initializeHardFaultTab();
     initializeVcuTab();
+    initializeNetworkConfigTab();
     
     m_displayTabWidget->addTab(m_hardFaultTab, "HardFault故障信息");
     m_displayTabWidget->addTab(m_vcuTab, "VCU综合信息");
+    m_displayTabWidget->addTab(m_networkConfigTab, "网络配置");
 }
 
 void StatusWidget::initializeHardFaultTab()
@@ -699,11 +701,89 @@ void StatusWidget::initializeVcuTab()
     tabLayout->addWidget(m_vcuScrollArea);
 }
 
+void StatusWidget::initializeNetworkConfigTab()
+{
+    m_networkConfigTab = new QWidget();
+    m_networkConfigScrollArea = new QScrollArea(m_networkConfigTab);
+    m_networkConfigScrollArea->setWidgetResizable(true);
+    
+    // 创建内容widget
+    QWidget* contentWidget = new QWidget();
+    QVBoxLayout* mainLayout = new QVBoxLayout(contentWidget);
+    
+    // 创建查询按钮组
+    QGroupBox* queryGroupBox = new QGroupBox("网络配置查询", contentWidget);
+    QGridLayout* queryLayout = new QGridLayout(queryGroupBox);
+    
+    m_macQueryBtn = new QPushButton("MAC地址查询", queryGroupBox);
+    m_ipQueryBtn = new QPushButton("IP地址查询", queryGroupBox);
+    m_maskQueryBtn = new QPushButton("子网掩码查询", queryGroupBox);
+    m_gatewayQueryBtn = new QPushButton("网关地址查询", queryGroupBox);
+    
+    queryLayout->addWidget(m_macQueryBtn, 0, 0);
+    queryLayout->addWidget(m_ipQueryBtn, 0, 1);
+    queryLayout->addWidget(m_maskQueryBtn, 1, 0);
+    queryLayout->addWidget(m_gatewayQueryBtn, 1, 1);
+    
+    mainLayout->addWidget(queryGroupBox);
+    
+    // 创建显示区域
+    QGroupBox* displayGroupBox = new QGroupBox("网络配置信息", contentWidget);
+    QGridLayout* displayLayout = new QGridLayout(displayGroupBox);
+    
+    int row = 0;
+    
+    // MAC地址
+    displayLayout->addWidget(new QLabel("MAC地址:", displayGroupBox), row, 0);
+    m_queryMacAddressEdit = new QLineEdit(displayGroupBox);
+    m_queryMacAddressEdit->setReadOnly(true);
+    displayLayout->addWidget(m_queryMacAddressEdit, row++, 1);
+    
+    // IP地址
+    displayLayout->addWidget(new QLabel("IP地址:", displayGroupBox), row, 0);
+    m_queryIpAddressEdit = new QLineEdit(displayGroupBox);
+    m_queryIpAddressEdit->setReadOnly(true);
+    displayLayout->addWidget(m_queryIpAddressEdit, row++, 1);
+    
+    // 子网掩码
+    displayLayout->addWidget(new QLabel("子网掩码:", displayGroupBox), row, 0);
+    m_queryMaskAddressEdit = new QLineEdit(displayGroupBox);
+    m_queryMaskAddressEdit->setReadOnly(true);
+    displayLayout->addWidget(m_queryMaskAddressEdit, row++, 1);
+    
+    // 网关地址
+    displayLayout->addWidget(new QLabel("网关地址:", displayGroupBox), row, 0);
+    m_queryGatewayAddressEdit = new QLineEdit(displayGroupBox);
+    m_queryGatewayAddressEdit->setReadOnly(true);
+    displayLayout->addWidget(m_queryGatewayAddressEdit, row++, 1);
+    
+    // 最后更新时间
+    displayLayout->addWidget(new QLabel("最后更新:", displayGroupBox), row, 0);
+    m_networkConfigLastUpdateLabel = new QLabel("暂无数据", displayGroupBox);
+    m_networkConfigLastUpdateLabel->setStyleSheet("color: gray; font-style: italic;");
+    displayLayout->addWidget(m_networkConfigLastUpdateLabel, row++, 1);
+    
+    mainLayout->addWidget(displayGroupBox);
+    mainLayout->addStretch();
+    
+    m_networkConfigScrollArea->setWidget(contentWidget);
+    
+    // 创建标签页布局
+    QVBoxLayout* tabLayout = new QVBoxLayout(m_networkConfigTab);
+    tabLayout->addWidget(m_networkConfigScrollArea);
+}
+
 void StatusWidget::setupConnections()
 {
     // 按键信号连接
     connect(m_hardFaultReadBtn, &QPushButton::clicked, this, &StatusWidget::onHardFaultReadClicked);
     connect(m_vcuReadBtn, &QPushButton::clicked, this, &StatusWidget::onVcuReadClicked);
+    
+    // 网络配置查询按钮信号连接
+    connect(m_macQueryBtn, &QPushButton::clicked, this, &StatusWidget::onMacQueryClicked);
+    connect(m_ipQueryBtn, &QPushButton::clicked, this, &StatusWidget::onIpQueryClicked);
+    connect(m_maskQueryBtn, &QPushButton::clicked, this, &StatusWidget::onMaskQueryClicked);
+    connect(m_gatewayQueryBtn, &QPushButton::clicked, this, &StatusWidget::onGatewayQueryClicked);
     
     // 状态更新定时器
     m_statusTimer = new QTimer(this);
@@ -719,6 +799,26 @@ void StatusWidget::onHardFaultReadClicked()
 void StatusWidget::onVcuReadClicked()
 {
     emit vcuInfoReadRequested();
+}
+
+void StatusWidget::onMacQueryClicked()
+{
+    emit macAddressQueryRequested();
+}
+
+void StatusWidget::onIpQueryClicked()
+{
+    emit ipAddressQueryRequested();
+}
+
+void StatusWidget::onMaskQueryClicked()
+{
+    emit maskAddressQueryRequested();
+}
+
+void StatusWidget::onGatewayQueryClicked()
+{
+    emit gatewayAddressQueryRequested();
 }
 
 void StatusWidget::displayHardFaultInfo(const hardfault_info_t& hardFaultData)
@@ -923,4 +1023,70 @@ QString StatusWidget::formatVersion(const char* version, int maxLength)
         versionArray.truncate(nullIndex);
     }
     return QString::fromUtf8(versionArray);
+}
+
+void StatusWidget::displayMacAddress(const QByteArray& macData)
+{
+    if (macData.size() == 6) {
+        QString macString = QString("%1:%2:%3:%4:%5:%6")
+                           .arg((uint8_t)macData[5], 2, 16, QChar('0'))
+                           .arg((uint8_t)macData[4], 2, 16, QChar('0'))
+                           .arg((uint8_t)macData[3], 2, 16, QChar('0'))
+                           .arg((uint8_t)macData[2], 2, 16, QChar('0'))
+                           .arg((uint8_t)macData[1], 2, 16, QChar('0'))
+                           .arg((uint8_t)macData[0], 2, 16, QChar('0')).toUpper();
+        
+        m_queryMacAddressEdit->setText(macString);
+        m_networkConfigLastUpdateLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    } else {
+        m_queryMacAddressEdit->setText("数据格式错误");
+    }
+}
+
+void StatusWidget::displayIpAddress(const QByteArray& ipData)
+{
+    if (ipData.size() == 4) {
+        QString ipString = QString("%1.%2.%3.%4")
+                          .arg((uint8_t)ipData[3])
+                          .arg((uint8_t)ipData[2])
+                          .arg((uint8_t)ipData[1])
+                          .arg((uint8_t)ipData[0]);
+        
+        m_queryIpAddressEdit->setText(ipString);
+        m_networkConfigLastUpdateLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    } else {
+        m_queryIpAddressEdit->setText("数据格式错误");
+    }
+}
+
+void StatusWidget::displayMaskAddress(const QByteArray& maskData)
+{
+    if (maskData.size() == 4) {
+        QString maskString = QString("%1.%2.%3.%4")
+                            .arg((uint8_t)maskData[3])
+                            .arg((uint8_t)maskData[2])
+                            .arg((uint8_t)maskData[1])
+                            .arg((uint8_t)maskData[0]);
+        
+        m_queryMaskAddressEdit->setText(maskString);
+        m_networkConfigLastUpdateLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    } else {
+        m_queryMaskAddressEdit->setText("数据格式错误");
+    }
+}
+
+void StatusWidget::displayGatewayAddress(const QByteArray& gatewayData)
+{
+    if (gatewayData.size() == 4) {
+        QString gatewayString = QString("%1.%2.%3.%4")
+                               .arg((uint8_t)gatewayData[3])
+                               .arg((uint8_t)gatewayData[2])
+                               .arg((uint8_t)gatewayData[1])
+                               .arg((uint8_t)gatewayData[0]);
+        
+        m_queryGatewayAddressEdit->setText(gatewayString);
+        m_networkConfigLastUpdateLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    } else {
+        m_queryGatewayAddressEdit->setText("数据格式错误");
+    }
 } 

@@ -28,6 +28,11 @@ enum protocol_function_code_e
     PC_MASK_ADDR_SET              = 0x01F3,  /// 自定义功能码，设置子网掩码，数据长度为4字节
     PC_GATEWAY_ADDR_SET           = 0x01F4,  /// 自定义功能码，设置网关地址，数据长度为4字节
     PC_HARDFAULT_INFO_GET         = 0x01F5,  /// 自定义功能码，获取HardFault故障信息，数据长度为0
+    PC_MAC_ADDR_QUERY             = 0x01F6,  /// 自定义功能码，查询mac地址
+    PC_IP_ADDR_QUERY              = 0x01F7,  /// 自定义功能码，查询ip地址
+    PC_MASK_ADDR_QUERY            = 0x01F8,  /// 自定义功能码，查询掩码地址
+    PC_GATEWAY_ADDR_QUERY         = 0x01F9,  /// 自定义功能码，查询网关地址
+	
 
     PC_VCU_PARAM_SET              = 0xFFFD,  /// 自定义功能码，设置VCU参数：后避障距离和速度校正系数，数据长度为8字节        
     

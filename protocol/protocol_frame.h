@@ -36,6 +36,12 @@ public:
     // 静态工厂方法 - 创建VCU信息获取帧
     static QByteArray buildVcuInfoGetFrame();
     
+    // 静态工厂方法 - 创建网络配置查询帧
+    static QByteArray buildMacQueryFrame();
+    static QByteArray buildIpQueryFrame();
+    static QByteArray buildMaskQueryFrame();
+    static QByteArray buildGatewayQueryFrame();
+    
     // 解析接收到的帧数据
     struct ParsedData {
         uint8_t sourceAddr;

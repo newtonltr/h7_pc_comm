@@ -90,6 +90,34 @@ QByteArray ProtocolFrame::buildVcuInfoGetFrame()
     return buildFrame(PC_VCU_INFO_GET, emptyData);
 }
 
+QByteArray ProtocolFrame::buildMacQueryFrame()
+{
+    // MAC地址查询请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_MAC_ADDR_QUERY, emptyData);
+}
+
+QByteArray ProtocolFrame::buildIpQueryFrame()
+{
+    // IP地址查询请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_IP_ADDR_QUERY, emptyData);
+}
+
+QByteArray ProtocolFrame::buildMaskQueryFrame()
+{
+    // 子网掩码查询请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_MASK_ADDR_QUERY, emptyData);
+}
+
+QByteArray ProtocolFrame::buildGatewayQueryFrame()
+{
+    // 网关地址查询请求，数据长度为0
+    QByteArray emptyData;
+    return buildFrame(PC_GATEWAY_ADDR_QUERY, emptyData);
+}
+
 ProtocolFrame::ParsedData ProtocolFrame::parseFrame(const QByteArray& frameData)
 {
     ParsedData result;

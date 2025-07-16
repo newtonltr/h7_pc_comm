@@ -169,6 +169,16 @@ void MainWindow::setupConnections()
     connect(m_statusWidget, &StatusWidget::vcuInfoReadRequested,
             this, &MainWindow::onVcuInfoReadRequested);
     
+    // 网络配置查询信号连接
+    connect(m_statusWidget, &StatusWidget::macAddressQueryRequested,
+            this, &MainWindow::onMacAddressQueryRequested);
+    connect(m_statusWidget, &StatusWidget::ipAddressQueryRequested,
+            this, &MainWindow::onIpAddressQueryRequested);
+    connect(m_statusWidget, &StatusWidget::maskAddressQueryRequested,
+            this, &MainWindow::onMaskAddressQueryRequested);
+    connect(m_statusWidget, &StatusWidget::gatewayAddressQueryRequested,
+            this, &MainWindow::onGatewayAddressQueryRequested);
+    
     // 串口通信信号连接
     connect(m_serialThread, &SerialThread::dataReceived,
             this, &MainWindow::onSerialDataReceived);
@@ -442,6 +452,66 @@ void MainWindow::onVcuInfoReadRequested()
     }
 }
 
+void MainWindow::onMacAddressQueryRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildMacQueryFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("MAC地址查询命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("MAC地址查询发送失败");
+    }
+}
+
+void MainWindow::onIpAddressQueryRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildIpQueryFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("IP地址查询命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("IP地址查询发送失败");
+    }
+}
+
+void MainWindow::onMaskAddressQueryRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildMaskQueryFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("子网掩码查询命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("子网掩码查询发送失败");
+    }
+}
+
+void MainWindow::onGatewayAddressQueryRequested()
+{
+    if (!m_isConnected) {
+        m_statusWidget->showErrorMessage("请先建立通信连接");
+        return;
+    }
+    
+    QByteArray frame = ProtocolFrame::buildGatewayQueryFrame();
+    if (sendProtocolFrame(frame)) {
+        m_debugWidget->addStatusMessage("网关地址查询命令已发送");
+    } else {
+        m_statusWidget->showErrorMessage("网关地址查询发送失败");
+    }
+}
+
 // 串口通信槽函数
 void MainWindow::onSerialDataReceived(const QByteArray& data)
 {
@@ -584,6 +654,46 @@ void MainWindow::processReceivedFrame(const QByteArray& frameData)
                 } else {
                     m_statusWidget->showErrorMessage(QString("VCU数据长度错误: 期望 %1, 实际 %2")
                                                    .arg(sizeof(state_def_t)).arg(parsedData.data.size()));
+                }
+                break;
+                
+            case PC_MAC_ADDR_QUERY:
+                if (parsedData.data.size() == 6) {
+                    m_statusWidget->displayMacAddress(parsedData.data);
+                    m_debugWidget->addStatusMessage("MAC地址查询成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("MAC地址数据长度错误: 期望 6, 实际 %1")
+                                                   .arg(parsedData.data.size()));
+                }
+                break;
+                
+            case PC_IP_ADDR_QUERY:
+                if (parsedData.data.size() == 4) {
+                    m_statusWidget->displayIpAddress(parsedData.data);
+                    m_debugWidget->addStatusMessage("IP地址查询成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("IP地址数据长度错误: 期望 4, 实际 %1")
+                                                   .arg(parsedData.data.size()));
+                }
+                break;
+                
+            case PC_MASK_ADDR_QUERY:
+                if (parsedData.data.size() == 4) {
+                    m_statusWidget->displayMaskAddress(parsedData.data);
+                    m_debugWidget->addStatusMessage("子网掩码查询成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("子网掩码数据长度错误: 期望 4, 实际 %1")
+                                                   .arg(parsedData.data.size()));
+                }
+                break;
+                
+            case PC_GATEWAY_ADDR_QUERY:
+                if (parsedData.data.size() == 4) {
+                    m_statusWidget->displayGatewayAddress(parsedData.data);
+                    m_debugWidget->addStatusMessage("网关地址查询成功");
+                } else {
+                    m_statusWidget->showErrorMessage(QString("网关地址数据长度错误: 期望 4, 实际 %1")
+                                                   .arg(parsedData.data.size()));
                 }
                 break;
                 
