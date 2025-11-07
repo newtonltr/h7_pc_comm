@@ -67,7 +67,7 @@ signals:
     void gatewayAddressSetRequested(const QString& gatewayAddress);
 
     // VCU参数设置信号
-    void vcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
+    void vcuParamSetRequested(const QString& frontDecObstacleDistance, const QString& frontStopObstacleDistance, const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
 
 private slots:
     void onCommunicationTypeChanged();
@@ -133,6 +133,8 @@ private:
 
     // VCU参数设置
     QGroupBox* m_vcuParamGroupBox;
+    QLineEdit* m_vcuParamFrontDecObstacleDistanceEdit;
+    QLineEdit* m_vcuParamFrontStopObstacleDistanceEdit;
     QLineEdit* m_vcuParamRearObstacleDistanceEdit;
     QLineEdit* m_vcuParamSpeedCorrectionFactorEdit;
     QPushButton* m_setVcuParamBtn;

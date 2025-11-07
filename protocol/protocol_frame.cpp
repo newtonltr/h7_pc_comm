@@ -61,15 +61,19 @@ QByteArray ProtocolFrame::buildGatewaySetFrame(const QString& gatewayAddress)
     return buildFrame(PC_GATEWAY_ADDR_SET, gatewayData);
 }
 
-QByteArray ProtocolFrame::buildVcuParamSetFrame(const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
+QByteArray ProtocolFrame::buildVcuParamSetFrame(const QString& frontDecObstacleDistance, const QString& frontStopObstacleDistance, const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
 {
     QByteArray vcuParamData;
+    float frontDecObstacleDistanceFloat = frontDecObstacleDistance.toFloat();
+    float frontStopObstacleDistanceFloat = frontStopObstacleDistance.toFloat();
     float rearObstacleDistanceFloat = rearObstacleDistance.toFloat();   
     float speedCorrectionFactorFloat = speedCorrectionFactor.toFloat();
+    vcuParamData.append(reinterpret_cast<const char*>(&frontDecObstacleDistanceFloat), sizeof(float));
+    vcuParamData.append(reinterpret_cast<const char*>(&frontStopObstacleDistanceFloat), sizeof(float));
     vcuParamData.append(reinterpret_cast<const char*>(&rearObstacleDistanceFloat), sizeof(float));
     vcuParamData.append(reinterpret_cast<const char*>(&speedCorrectionFactorFloat), sizeof(float));
     if (vcuParamData.isEmpty()) {
-        qWarning() << "Invalid vcu param format:" << rearObstacleDistance << "or" << speedCorrectionFactor;
+        qWarning() << "Invalid vcu param format:" << frontDecObstacleDistance << "or" << frontStopObstacleDistance << "or" << rearObstacleDistance << "or" << speedCorrectionFactor;    
         return QByteArray();
     }
 

@@ -401,17 +401,17 @@ void MainWindow::onGatewayAddressSetRequested(const QString& gatewayAddress)
     }
 }
 
-void MainWindow::onVcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
+void MainWindow::onVcuParamSetRequested(const QString& frontDecObstacleDistance, const QString& frontStopObstacleDistance, const QString& rearObstacleDistance, const QString& speedCorrectionFactor)
 {
     if (!m_isConnected) {
         showError("请先建立通信连接");
         return;
     }
 
-    QByteArray frame = ProtocolFrame::buildVcuParamSetFrame(rearObstacleDistance, speedCorrectionFactor);
+    QByteArray frame = ProtocolFrame::buildVcuParamSetFrame(frontDecObstacleDistance, frontStopObstacleDistance, rearObstacleDistance, speedCorrectionFactor);
     if (!frame.isEmpty() && sendProtocolFrame(frame)) {
-        m_debugWidget->addStatusMessage(QString("VCU参数设置命令已发送: 后避障距离: %1, 速度校正系数: %2")
-                                      .arg(rearObstacleDistance).arg(speedCorrectionFactor));
+        m_debugWidget->addStatusMessage(QString("VCU参数设置命令已发送: 前避障减速距离: %1, 前避障停止距离: %2, 后避障距离: %3, 速度校正系数: %4")
+                                      .arg(frontDecObstacleDistance).arg(frontStopObstacleDistance).arg(rearObstacleDistance).arg(speedCorrectionFactor));
     } else {
         if (frame.isEmpty()) {
             showError("VCU参数格式错误");

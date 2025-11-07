@@ -28,7 +28,7 @@ public:
     static QByteArray buildGatewaySetFrame(const QString& gatewayAddress);
 
     // 静态工厂方法 - 创建VCU参数设置帧  
-    static QByteArray buildVcuParamSetFrame(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
+    static QByteArray buildVcuParamSetFrame(const QString& frontDecObstacleDistance, const QString& frontStopObstacleDistance, const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
 
     // 静态工厂方法 - 创建HardFault信息获取帧
     static QByteArray buildHardFaultInfoGetFrame();

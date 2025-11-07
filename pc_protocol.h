@@ -34,7 +34,7 @@ enum protocol_function_code_e
     PC_GATEWAY_ADDR_QUERY         = 0x01F9,  /// 自定义功能码，查询网关地址
 	
 
-    PC_VCU_PARAM_SET              = 0xFFFD,  /// 自定义功能码，设置VCU参数：后避障距离和速度校正系数，数据长度为8字节        
+    PC_VCU_PARAM_SET              = 0xFFFD,  /// 自定义功能码，设置VCU参数：后避障距离和速度校正系数      
     
 };
 

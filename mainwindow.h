@@ -44,7 +44,7 @@ private slots:
     void onIpAddressSetRequested(const QString& ipAddress);
     void onMaskAddressSetRequested(const QString& maskAddress);
     void onGatewayAddressSetRequested(const QString& gatewayAddress);
-    void onVcuParamSetRequested(const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
+    void onVcuParamSetRequested(const QString& frontDecObstacleDistance, const QString& frontStopObstacleDistance, const QString& rearObstacleDistance, const QString& speedCorrectionFactor);
     
     // 状态读取槽函数
     void onHardFaultInfoReadRequested();

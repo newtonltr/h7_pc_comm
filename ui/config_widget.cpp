@@ -217,16 +217,24 @@ void ConfigWidget::initializeParameterGroup()
     m_vcuParamGroupBox = new QGroupBox("VCU参数设置", m_paramGroupBox);
     QGridLayout* vcuParamLayout = new QGridLayout(m_vcuParamGroupBox);
     
-    vcuParamLayout->addWidget(new QLabel("后避障距离(m):"), 0, 0);
-    m_vcuParamRearObstacleDistanceEdit = new QLineEdit("0.16", m_vcuParamGroupBox);
-    vcuParamLayout->addWidget(m_vcuParamRearObstacleDistanceEdit, 0, 1);
+    vcuParamLayout->addWidget(new QLabel("前避障减速距离(m):"), 0, 0);
+    m_vcuParamFrontDecObstacleDistanceEdit = new QLineEdit("1.80", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_vcuParamFrontDecObstacleDistanceEdit, 0, 1);
 
-    vcuParamLayout->addWidget(new QLabel("速度校正系数:"), 1, 0);
+    vcuParamLayout->addWidget(new QLabel("前避障停止距离(m):"), 1, 0);
+    m_vcuParamFrontStopObstacleDistanceEdit = new QLineEdit("0.30", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_vcuParamFrontStopObstacleDistanceEdit, 1, 1);
+
+    vcuParamLayout->addWidget(new QLabel("后避障距离(m):"), 2, 0);
+    m_vcuParamRearObstacleDistanceEdit = new QLineEdit("0.16", m_vcuParamGroupBox);
+    vcuParamLayout->addWidget(m_vcuParamRearObstacleDistanceEdit, 2, 1);
+
+    vcuParamLayout->addWidget(new QLabel("速度校正系数:"), 3, 0);
     m_vcuParamSpeedCorrectionFactorEdit = new QLineEdit("0.98", m_vcuParamGroupBox);
-    vcuParamLayout->addWidget(m_vcuParamSpeedCorrectionFactorEdit, 1, 1);
+    vcuParamLayout->addWidget(m_vcuParamSpeedCorrectionFactorEdit, 3, 1);
 
     m_setVcuParamBtn = new QPushButton("设置VCU参数", m_vcuParamGroupBox);
-    vcuParamLayout->addWidget(m_setVcuParamBtn, 0, 2);
+    vcuParamLayout->addWidget(m_setVcuParamBtn, 4, 0);
 
     mainLayout->addWidget(m_macGroupBox);
     mainLayout->addWidget(m_ipGroupBox);
@@ -340,7 +348,7 @@ void ConfigWidget::onSetGatewayClicked()
 
 void ConfigWidget::onSetVcuParamClicked()
 {
-    emit vcuParamSetRequested(m_vcuParamRearObstacleDistanceEdit->text(), m_vcuParamSpeedCorrectionFactorEdit->text());
+    emit vcuParamSetRequested(m_vcuParamFrontDecObstacleDistanceEdit->text(), m_vcuParamFrontStopObstacleDistanceEdit->text(), m_vcuParamRearObstacleDistanceEdit->text(), m_vcuParamSpeedCorrectionFactorEdit->text());
 }
 
 
